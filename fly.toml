@@ -2,7 +2,6 @@
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
-
 app = '24462748botlab5'
 primary_region = 'hkg'
 
@@ -12,13 +11,19 @@ primary_region = 'hkg'
 [env]
   PORT = '8080'
 
-[http_service]
-  internal_port = 8080
-  force_https = true
-  auto_stop_machines = 'stop'
-  auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+[[services]]
+  internal_port = 8000
+  protocol = "tcp"
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
 
 [[vm]]
-  size = 'shared-cpu-1x'
+size = 'shared-cpu-1x'
